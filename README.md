@@ -18,6 +18,30 @@ In order to send a `POST` with JSON in Postman:
 
 In order to work quickly for an interview problem, I decided to use a Node.js server. In order to accelerate handling of API calls and their JSON bodies, I used the external packages of `express` and `body-parser`.
 
+## Summary of solution
+
+I created a "Devices Store" object to hold all the information for our devices, where the IDs of the devices are used as keys, and "Device" objects are used as values. Keying on the IDs allows us to quickly find a device by ID. When we receive new readings with a POST, I check to see if the ID already exists in the Devices Store, and if not I add it to the store before processing the readings that were submitted.
+
+Each "Device" object maintains its own readings, which I store as an object with timestamps as the keys and the counts as the values. Keying on the timestamps allows us to quickly find a reading by timestamp, to look for duplicates before adding another reading.
+
+Each "Device" keeps track of the latest reading timestamp and the cumulative sum in local variables, since we know these are values we want to pull out with our GET API calls. In my opinion, it seemed more efficient to handle updating these when adding a reading than to have to compute them when requested by computing comparisons/addition across all readings on the fly.
+
+As a result, I just needed to give the "Device" class a couple class methods for accessing these pre-computed variables, which are then called by the respective GET handlers.
+
+## Assumptions made
+
+- I documented this inline as well, but due to the request to ignore duplicate readings, I made the assumption that a device would never send two unique readings sent at the exact same timestamp. It seems impossible to tell the difference between two identical timestamp readings whether they were intentional (i.e., two intentionally identical-count readings) or duplicates (i.e., two accidentally-sent identical-count readings). If multiple readings at the same timestamp needed to be supported, I would advocate for the devices to send a unique identifier with each reading.
+- Specifics weren't given about how to handle errors, so I assumed it would be OK to send back JSON with an error message. In a real project, I would chat with stakeholders to determine the best way to handle errors, what information we should give back, etc.
+- If I find an error with one reading (e.g., a poorly formatted timestamp), I assumed it was correct to skip processing the rest of the readings after that reading.
+
+## Things skipped for time constraints
+
+In order to keep this a reasonably timeboxed assignment, I kept things simple:
+
+- I didn't convert the whole project to Typescript, even though types are super important for a larger-scale project.
+- I didn't do any sort of authentication to ensure only valid requests are made.
+- I used a hardcoded PORT of 3000 and didn't set up an environment variables file.
+
 ## Endpoints available
 
 ### `GET /status`
@@ -29,9 +53,9 @@ Not required for the assignment, but just a quick endpoint to see that the serve
 This endpoint allows devices to send their readings. It requires the following arguments to be sent in the JSON body:
 
 - id - a string representing the UUID for the device
-- readings- an array of readings for the device
-  - timestamp- an ISO-8061 timestamp for when the reading was taken
-  - count- an integer representing the reading data
+- readings - an array of readings for the device
+  - timestamp - an ISO-8061 timestamp for when the reading was taken
+  - count - an integer representing the reading data
 
 ### `GET /latest?id={device_id}`
 
