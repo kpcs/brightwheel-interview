@@ -20,6 +20,7 @@ app.post("/reading", (request, response) => {
     return;
   }
 
+  // Find the device by ID in our store, or create one if it doesn't yet exist.
   let device = devicesStore.findDevice(deviceId);
   if (!device) {
     devicesStore.addDevice(deviceId);
@@ -36,6 +37,7 @@ app.post("/reading", (request, response) => {
   }
 
   let errorFound = false;
+  // Iterate through all the readings and -- if they are valid -- store them.
   readings.forEach((reading) => {
     if (errorFound) {
       // We've already sent an error response to the client, so skip
@@ -62,6 +64,7 @@ app.post("/reading", (request, response) => {
       return;
     }
 
+    // We're good. Store it.
     device.addReading(timestamp, count);
   });
 
