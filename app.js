@@ -28,7 +28,7 @@ app.post("/reading", (request, response) => {
     }
     const timestamp = new Date(reading["timestamp"]);
     if (isNaN(timestamp.getTime())) {
-      response.json({
+      response.status(400).json({
         success: "false",
         error: "Timestamp invalid",
       });
@@ -38,7 +38,7 @@ app.post("/reading", (request, response) => {
 
     const count = reading["count"];
     if (isNaN(count)) {
-      response.json({
+      response.status(400).json({
         success: "false",
         error: "Count should be a number",
       });
@@ -50,10 +50,7 @@ app.post("/reading", (request, response) => {
   });
 
   if (!errorFound) {
-    response.json({
-      success: "true",
-      error: "Readings recorded successfully",
-    });
+    response.status(201).end("Readings saved");
   }
 });
 
@@ -62,14 +59,14 @@ app.get("/latest", (request, response) => {
 
   const device = devicesStore.findDevice(deviceId);
   if (!device) {
-    response.json({
+    response.status(400).json({
       success: "false",
       error: "Device ID not found",
     });
     return;
   }
 
-  response.json({
+  response.status(200).json({
     latest_timestamp: device.getLatestTimestamp(),
   });
 });
@@ -79,20 +76,20 @@ app.get("/sum", (request, response) => {
 
   const device = devicesStore.findDevice(deviceId);
   if (!device) {
-    response.json({
+    response.status(400).json({
       success: "false",
       error: "Device ID not found",
     });
     return;
   }
 
-  response.json({
+  response.status(200).json({
     cumulative_count: device.getSum(),
   });
 });
 
 app.get("/status", (_request, response) => {
-  response.json({
+  response.status(200).json({
     status: "running",
   });
 });
@@ -103,3 +100,5 @@ const PORT = 3000;
 app.listen(PORT, () => {
   console.log("app listening on port " + PORT);
 });
+
+export default app;

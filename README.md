@@ -14,9 +14,11 @@ In order to send a `POST` with JSON in Postman:
 - Still on the Body tab, enter in the JSON you'd like to send.
 - Click `Send`
 
+In order to run the test suite for the API, navigate to the project folder and run `npm test`.
+
 ## Technologies used
 
-In order to work quickly for an interview problem, I decided to use a Node.js server. In order to accelerate handling of API calls and their JSON bodies, I used the external packages of `express` and `body-parser`.
+In order to work quickly for an interview problem, I decided to use a Node.js server. In order to accelerate handling of API calls and their JSON bodies, I used the external packages of `express` and `body-parser`. In order to write some tests, I installed `supertest`, `mocha` and `chai`.
 
 ## Summary of solution
 
@@ -41,6 +43,7 @@ In order to keep this a reasonably timeboxed assignment, I kept things simple:
 - I didn't convert the whole project to Typescript, even though types are super important for a larger-scale project.
 - I didn't do any sort of authentication to ensure only valid requests are made.
 - I used a hardcoded PORT of 3000 and didn't set up an environment variables file.
+- Per the nudge in the problem prompt, I wrote some tests for the API endpoints which act as integration tests of the whole flow, but I skipped writing unit tests for each of the individual class functions. In a real project, I would be more thorough with testing various cases and components.
 
 ## Endpoints available
 
