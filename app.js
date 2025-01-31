@@ -12,6 +12,14 @@ app.post("/reading", (request, response) => {
   const postData = request.body;
   const deviceId = postData.id;
 
+  if (!deviceId) {
+    response.status(400).json({
+      success: "false",
+      error: "Device ID required",
+    });
+    return;
+  }
+
   let device = devicesStore.findDevice(deviceId);
   if (!device) {
     devicesStore.addDevice(deviceId);
@@ -19,6 +27,14 @@ app.post("/reading", (request, response) => {
   }
 
   const readings = postData.readings;
+  if (!readings || readings.length == 0) {
+    response.status(400).json({
+      success: "false",
+      error: "Readings are required",
+    });
+    return;
+  }
+
   let errorFound = false;
   readings.forEach((reading) => {
     if (errorFound) {

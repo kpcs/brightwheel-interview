@@ -145,4 +145,42 @@ describe("App", () => {
         done();
       });
   });
+
+  it("should error with no device ID", function (done) {
+    const badData = {
+      readings: [
+        {
+          timestamp: "2021-09-29T16:08:15+01:00",
+          count: 2,
+        },
+      ],
+    };
+    request(app)
+      .post("/reading")
+      .send(badData)
+      .expect(400)
+      .end(function (err, response) {
+        expect(response.body).to.have.property("error", "Device ID required");
+        if (err) throw err;
+        done();
+      });
+  });
+
+  it("should error with no readings", function (done) {
+    const badData = {
+      id: uuid,
+    };
+    request(app)
+      .post("/reading")
+      .send(badData)
+      .expect(400)
+      .end(function (err, response) {
+        expect(response.body).to.have.property(
+          "error",
+          "Readings are required"
+        );
+        if (err) throw err;
+        done();
+      });
+  });
 });

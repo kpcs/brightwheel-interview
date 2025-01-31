@@ -2,7 +2,7 @@
 
 ## Setup
 
-After downloading this repository onto your local machine, you can start this server by navigating to the project folder and running `node app.js`. The application will default to using port `3000`. (In a real-world situation, this would not be hard-coded but would rather live in an environment variables file.)
+After downloading this repository onto your local machine, you can start this server by navigating to the project folder and running `node app.js`. The application will default to using port `3000`.
 
 To send requests to the API, you can use an application like Postman. Thus, you can send API requests like: `GET localhost:3000/status`.
 
@@ -18,13 +18,13 @@ In order to run the test suite for the API, navigate to the project folder and r
 
 ## Technologies used
 
-In order to work quickly for an interview problem, I decided to use a Node.js server. In order to accelerate handling of API calls and their JSON bodies, I used the external packages of `express` and `body-parser`. In order to write some tests, I installed `supertest`, `mocha` and `chai`.
+I decided to use a Node.js server. In order to accelerate handling of API calls and their JSON bodies, I used the external packages of `express` and `body-parser`. In order to write some tests, I installed `supertest`, `mocha`, and `chai`.
 
 ## Summary of solution
 
 I created a "Devices Store" object to hold all the information for our devices, where the IDs of the devices are used as keys, and "Device" objects are used as values. Keying on the IDs allows us to quickly find a device by ID. When we receive new readings with a POST, I check to see if the ID already exists in the Devices Store, and if not I add it to the store before processing the readings that were submitted.
 
-Each "Device" object maintains its own readings, which I store as an object with timestamps as the keys and the counts as the values. Keying on the timestamps allows us to quickly find a reading by timestamp, to look for duplicates before adding another reading.
+Each "Device" object maintains its own readings, which I store as an object with timestamps as the keys and the counts as the values. Keying on the timestamps allows us to quickly find a reading by timestamp, in order to look for duplicates before adding another reading.
 
 Each "Device" keeps track of the latest reading timestamp and the cumulative sum in local variables, since we know these are values we want to pull out with our GET API calls. In my opinion, it seemed more efficient to handle updating these when adding a reading than to have to compute them when requested by computing comparisons/addition across all readings on the fly.
 
@@ -60,6 +60,8 @@ This endpoint allows devices to send their readings. It requires the following a
   - timestamp - an ISO-8061 timestamp for when the reading was taken
   - count - an integer representing the reading data
 
+This endpoint will give error messages if the input is not as expected, for example, if an ID is not provided or the timestamp is not valid. It should return a 201 if successful.
+
 ### `GET /latest?id={device_id}`
 
 This endpoint allows you to fetch the timestamp of the latest reading for a specific device known by the UUID `device_id`. It should return the following JSON:
@@ -70,6 +72,8 @@ This endpoint allows you to fetch the timestamp of the latest reading for a spec
 }
 ```
 
+This endpoint will return an error message if the `device_id` is not found.
+
 ### `GET /sum?id={device_id}`
 
 This endpoint allows you to fetch the sum of counts of all readings for a specific device known by the UUID `device_id`. It should return the following JSON:
@@ -79,3 +83,7 @@ This endpoint allows you to fetch the sum of counts of all readings for a specif
     "cumulative_count": 17
 }
 ```
+
+This endpoint will return an error message if the `device_id` is not found.
+
+## Thank you, again, for taking the time to review my solution.
